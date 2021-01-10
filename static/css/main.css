@@ -1,0 +1,70 @@
+/* variables */
+:root {
+    --square-size: 80px;
+
+    --dark: #0b2032;
+    /* --light: white; */
+    --light: #ebf5fe;
+    --lighter: #f5fafe;
+    
+    --blue: #38a1fd;
+    --yellow: #fdf638;
+    --red: #fd383e;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+
+    background-color: var(--dark);
+}
+
+.connect-4 {
+    width: fit-content;
+    margin: auto;
+}
+
+.connect-4-hover, .connect-4-board {
+    padding: calc(var(--square-size) / 4);
+
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+}
+
+.connect-4-hover {
+    height: var(--square-size);
+    padding-bottom: calc(var(--square-size) / 8);
+}
+
+.connect-4-board {
+    width: calc(var(--square-size) * 7);
+    height: calc(var(--square-size) * 6);
+
+    background-color: var(--blue);
+}
+
+
+
+.connect-4-square {
+    width: calc(var(--square-size) * 0.8);
+    height: calc(var(--square-size) * 0.8);
+    margin: calc(var(--square-size) * 0.1);
+
+    border-radius: calc(var(--square-size) / 2);
+}
+
+.transparent {
+    background-color: transparent;
+}
+
+.empty {
+    background-color: var(--lighter);
+}
+
+.yellow {
+    background-color: var(--yellow);
+}
+
+.red {
+    background-color: var(--red);
+}
