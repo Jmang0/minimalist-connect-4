@@ -1,4 +1,4 @@
-/* variables */
+/* Variables */
 :root {
     --square-size: 80px;
 
@@ -12,6 +12,7 @@
     --red: #fd383e;
 }
 
+/* General stuff */
 body {
     margin: 0px;
     padding: 0px;
@@ -19,16 +20,38 @@ body {
     background-color: var(--dark);
 }
 
-.connect-4 {
+.container {
     width: fit-content;
     margin: auto;
 }
 
-.connect-4-hover, .connect-4-board {
+.connect-4-hover, .connect-4-board, .info-bar {
     padding: calc(var(--square-size) / 4);
+}
 
+/* Info stuff */
+
+.info-text {
+    order: 3;
+
+    width: fit-content;
+    margin: auto;
+
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: calc(var(--square-size) / 4);
+    font-weight: bold;
+    color: var(--light);
+}
+
+
+/* The actual board styling */
+
+.connect-4-hover, .connect-4-board {
     display: grid;
     grid-template-columns: auto auto auto auto auto auto auto;
+
+    padding: calc(var(--square-size) / 4);
+    
 }
 
 .connect-4-hover {
@@ -42,8 +65,6 @@ body {
 
     background-color: var(--blue);
 }
-
-
 
 .connect-4-square {
     width: calc(var(--square-size) * 0.8);

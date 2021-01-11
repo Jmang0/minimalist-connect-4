@@ -2,12 +2,11 @@
 
 <head>
     <title>Minimalist Connect 4</title>
-    
-    <!-- js -->
-    <script src="js/main.js"></script>
-
     <!-- css -->
     <link rel="stylesheet" href="css/main.css">
+
+    <!-- js -->
+    <script src="js/main.js" defer></script>
 
     <!-- icon stuff -->
     <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
@@ -16,8 +15,17 @@
     <link rel="manifest" href="img/site.webmanifest">
 </head>
 
-<body onload="setup()">
-    <div class="connect-4"></div>
+<body>
+    <div class=container>
+        <div class="connect-4">
+            <div class="connect-4-hover"></div>
+            <div class="connect-4-board"></div>
+        </div>
+
+        <div class="info-bar">
+            <p class="info-text"></p>
+        </div>
+    </div>
 </body>
 
 </html>
