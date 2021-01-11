@@ -9,4 +9,4 @@ I decided I wanted to make connect 4, so I did. It's not finished yet, but it lo
 - Fix a bug where the token stays hanging
 - Make a bot to play against
 - Add a header
-
+- Add a reset/play again button
