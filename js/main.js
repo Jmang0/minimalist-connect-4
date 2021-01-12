@@ -64,14 +64,20 @@ window.connect_4.onmousemove = function(event) {
         return false
     }
     
+    
+
     var new_column = getMouseColumn(event)
     
+    console.log('Moved in column ' + new_column)
+
     if (new_column != window.column) {
         // Remove the hovering token from where it was and add it to the new column
         setHover(window.column, 'transparent')
         setHover(new_column, window.turn)
         window.column = new_column
     }
+
+
 }
 
 // Handle mouse clicks
@@ -85,7 +91,7 @@ window.connect_4.onclick = function(event) {
     // i didn't think this was necessary but it breaks without it
     window.column = getMouseColumn(event)
 
-
+    console.log('Clicked column ' + window.column)
     num_pieces_in_column = window.gamestate[window.column].length
 
     if (num_pieces_in_column < 6) {
