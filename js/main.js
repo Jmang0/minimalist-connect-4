@@ -7,14 +7,15 @@ window.addEventListener('load', function(){
     window.padding = square_size/4
 
     // Setup
-    setup()
+    setupGame()
+    setupBoard()
 
     // Link play again button to reset function
     window.play_again_button = document.getElementsByClassName('play-again-icon')[0]
     window.play_again_button.onclick = function(e) {reset()}
 })
 
-function setup() {
+function setupGame() {
     // Easier reference to the connect 4 element
     window.connect_4 = document.getElementsByClassName('connect-4')[0]
 
@@ -28,34 +29,11 @@ function setup() {
     window.turn = 'yellow'
     setText('Yellow\'s turn')
 
-    // Setup board
-    setupBoard()
-
     // Set click & move function
     window.connect_4.onmousemove = function(e) {onMouseMove(e)}
     window.connect_4.onclick = function(e) {onClick(e)}
+    window.connect_4.onmouseout = function(e) {onMouseOut(e)}
 }
-
-function reset() {
-    // Spin Animation
-    setAnimation(window.play_again_button, 'spin', 1000)
-
-    // Remove hovering squares
-    clearAllHovers()
-    window.hover = false
-
-    // Set board squares to empty
-    clearAllTokens()
-
-    // Game variables
-    window.gamestate = ['','','','','','',''] // setup empty game
-    window.winner = false
-    window.hover = true
-    window.turn = 'yellow'
-    setText('Yellow\'s turn')
-
-}
-// ----- BOARD FUNCTIONS -----
 
 function setupBoard() {
     // Reference the board section
@@ -91,6 +69,29 @@ function setupBoard() {
     console.log('Created the board')
 }
 
+function reset() {
+    // Spin Animation
+    setAnimation(window.play_again_button, 'spin', 1000)
+
+    // Remove hovering squares
+    clearAllHovers()
+    window.hover = false
+
+    // Set board squares to empty
+    clearAllTokens()
+
+    // Game variables
+    window.gamestate = ['','','','','','',''] // setup empty game
+    window.winner = false
+    window.hover = true
+    window.turn = 'yellow'
+    setText('Yellow\'s turn')
+
+}
+// ----- BOARD FUNCTIONS -----
+
+
+
 // ----- MOUSE FUNCTIONS -----
 
 // Handle the mouse moving
@@ -110,6 +111,10 @@ function onMouseMove(event) {
     }
 }
 
+function onMouseOut(event) {
+    clearAllHovers()
+}
+
 // Handle mouse clicks
 function onClick(event) {
     if (window.winner != false) {
@@ -121,7 +126,7 @@ function onClick(event) {
     // i didn't think this was necessary but it breaks without it
     window.column = getMouseColumn(event)
     // console.log('Clicked column ' + window.column)
-    
+
     num_pieces_in_column = window.gamestate[window.column].length
 
     if (num_pieces_in_column < 6) {
