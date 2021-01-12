@@ -1,23 +1,35 @@
-// ----- INIT -----
+// After the html and css have loaded, setup the board and stuff
+window.addEventListener('load', function(){
+    setup()
+})
 
-// Reference to the element
-window.connect_4 = document.getElementsByClassName('connect-4')[0]
+// ----- SETUP -----
+function setup() {
+    // Easier reference to the element
+    window.connect_4 = document.getElementsByClassName('connect-4')[0]
 
-// Get the css variable for the square size
-window.square_size = parseInt(
-    getComputedStyle(document.documentElement).getPropertyValue('--square-size')
-)
-window.padding = square_size/4
+    // Get the css variable for the square size
+    window.square_size = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--square-size')
+    )
+    window.padding = square_size/4
 
-// Game variables
-window.column = -1
-window.gamestate = ['','','','','','',''] // setup empty game
-window.winner = false
-window.turn = 'yellow'
-setText('Yellow\'s turn')
+    // Initial value for the mouse column, out of range
+    window.column = -1
 
-setupBoard()
+    // Game variables
+    window.gamestate = ['','','','','','',''] // setup empty game
+    window.winner = false
+    window.turn = 'yellow'
+    setText('Yellow\'s turn')
 
+    // Setup board
+    setupBoard()
+
+    // Set click & move function
+    window.connect_4.onmousemove = function(e) {onMouseMove(e)}
+    window.connect_4.onclick = function(e) {onClick(e)}
+}
 
 // ----- BOARD FUNCTIONS -----
 
@@ -55,10 +67,10 @@ function setupBoard() {
     console.log('Created the board')
 }
 
-// ----- EVENT FUNCTIONS -----
+// ----- MOUSE FUNCTIONS -----
 
 // Handle the mouse moving
-window.connect_4.onmousemove = function(event) {
+function onMouseMove(event) {
     if (window.winner != false) {
         // If the game is already over, don't bother tracking where the mouse is and stuff
         return false
@@ -81,7 +93,7 @@ window.connect_4.onmousemove = function(event) {
 }
 
 // Handle mouse clicks
-window.connect_4.onclick = function(event) {
+function onClick(event) {
     if (window.winner != false) {
         // If the game is already over, don't bother tracking where the mouse is and stuff
         return false
@@ -143,11 +155,13 @@ window.connect_4.onclick = function(event) {
 // Gets the board column that the mouse is in
 function getMouseColumn(event) {
     //the size/position of the connect 4 div
-    rect = window.connect_4.getBoundingClientRect()
+    var rect = window.connect_4.getBoundingClientRect()
         
     // rect.x is the x position of the connect 4 div (top left)
     // padding is the padding to the left
     // event.clientX gives the position of the mouse
+
+    // from these, calculate which column the mouse is in:
     return Math.floor((event.clientX - rect.x - window.padding)/window.square_size)
 }
 
