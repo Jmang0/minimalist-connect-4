@@ -136,8 +136,11 @@ function onClick(event) {
             if (winner == 'yellow') {
                 setText('Yellow wins!')
             }
-            else {
+            else if (winner == 'red'){
                 setText('Red wins!')
+            }
+            else if (winner == 'draw') {
+                setText('It\'s a draw!')
             }
 
             // Remove the hovering tokens
@@ -168,7 +171,7 @@ function getMouseColumn(event) {
 // ----- GAME FUNCTIONS -----
 
 // Get the winner of a game
-// will return: 'yellow', 'red' or false
+// will return: 'yellow', 'red', 'draw' or false
 function getWinner(gamestate) {
     // vertical
     for (column=0; column<7; column++) {
@@ -236,6 +239,18 @@ function getWinner(gamestate) {
         if (winner) {
             return winner
         }
+    }
+
+    // if there's no winners, check if the board is full
+    full = true
+    for (column in gamestate) {
+        if (gamestate[column].length < 6) {
+            full = false
+        }
+    }
+    // if it's full, it's a draw
+    if (full) {
+        return 'draw'
     }
 
     return false
