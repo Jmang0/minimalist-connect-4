@@ -3,83 +3,89 @@
 // Reference to the element
 window.connect_4 = document.getElementsByClassName('connect-4')[0]
 
-
 // Get the css variable for the square size
 window.square_size = parseInt(
     getComputedStyle(document.documentElement).getPropertyValue('--square-size')
 )
 window.padding = square_size/4
 
-// Game variable
+// Game variables
 window.column = -1
 window.gamestate = ['','','','','','',''] // setup empty game
+window.winner = false
 window.turn = 'yellow'
 setText('Yellow\'s turn')
 
-window.winner = null
+setupBoard()
 
 
-// ----- SETUP THE BOARD -----
+// ----- BOARD FUNCTIONS -----
 
-// Create the board section
-var board = document.getElementsByClassName('connect-4-board')[0]
+function setupBoard() {
+    // Reference the board section
+    var board = document.getElementsByClassName('connect-4-board')[0]
 
-// each square's id is:
-// connect-4-board-square-column-row
-for (row=5; row>=0; row--) {
-    for (column=0; column<7; column++) {
-        square = document.createElement('div')
-        square.className = 'connect-4-square empty'
-        square.id = `connect-4-board-square-${column}-${row}`
+    // each square's id is:
+    // connect-4-board-square-column-row
+    for (row=5; row>=0; row--) {
+        for (column=0; column<7; column++) {
+            square = document.createElement('div')
+            square.className = 'connect-4-square empty'
+            square.id = `connect-4-board-square-${column}-${row}`
 
-        board.appendChild(square)
+            board.appendChild(square)
+        }
     }
+
+    // Reference the hover section
+    var hover = document.getElementsByClassName('connect-4-hover')[0]
+
+    for (i=0; i<7; i++) {
+        square = document.createElement('div')
+        square.className = 'connect-4-square transparent'
+        square.id = `connect-4-hover-square-${i}`
+
+        hover.appendChild(square)
+    }
+
+    // Add them to the element
+    window.connect_4.appendChild(hover)
+    window.connect_4.appendChild(board)
+
+    console.log('Created the board')
 }
 
-// Create the hover section
-var hover = document.getElementsByClassName('connect-4-hover')[0]
+// ----- EVENT FUNCTIONS -----
 
-for (i=0; i<7; i++) {
-    square = document.createElement('div')
-    square.className = 'connect-4-square transparent'
-    square.id = `connect-4-hover-square-${i}`
-
-    hover.appendChild(square)
-}
-
-// Add them to the element
-window.connect_4.appendChild(hover)
-window.connect_4.appendChild(board)
-
-console.log('Created the board')
-
-
-// ----- FUNCTIONS -----
-
-// When the mouse mouse, update the column it's in
+// Handle the mouse moving
 window.connect_4.onmousemove = function(event) {
-    if (window.winner != null) {
+    if (window.winner != false) {
         // If the game is already over, don't bother tracking where the mouse is and stuff
-        return null
+        return false
     }
     
-    updateColumn(event)
+    var new_column = getMouseColumn(event)
+    
+    if (new_column != window.column) {
+        // Remove the hovering token from where it was and add it to the new column
+        setHover(window.column, 'transparent')
+        setHover(new_column, window.turn)
+        window.column = new_column
+    }
 }
 
 // Handle mouse clicks
 window.connect_4.onclick = function(event) {
-
-    if (window.winner != null) {
+    if (window.winner != false) {
         // If the game is already over, don't bother tracking where the mouse is and stuff
-        return null
+        return false
     }
 
     // when the mouse is clicked, update the column it's in
     // i didn't think this was necessary but it breaks without it
-    updateColumn(event)
+    window.column = getMouseColumn(event)
 
-    // console.log('Clicked column ' + window.column)
-    
+
     num_pieces_in_column = window.gamestate[window.column].length
 
     if (num_pieces_in_column < 6) {
@@ -100,65 +106,27 @@ window.connect_4.onclick = function(event) {
         }
 
         //Update the hovering token
-        document.getElementById(`connect-4-hover-square-${window.column}`).className = 'connect-4-square ' + window.turn
+        setHover(window.column, window.turn)
 
+        // Get the winner (could be false)
+        winner = getWinner(window.gamestate)
 
-        // Check if there's a winner
-        // vertical
-        for (column=0; column<7; column++) {
-            var column_string = window.gamestate[column]
-            winnerCheck(column_string)
-        }
+        if (winner) {
+            window.winner = winner
 
-        // horizontal
-        for (row=0; row<6; row++) {
-            var row_string = ''
-            for (column=0; column<7; column++) {
-                var token = window.gamestate[column][row]
-                if (token === undefined) {
-                    row_string += ' '
-                }
-                else {
-                    row_string += token
-                }
+            // Show the winner
+            if (winner == 'yellow') {
+                setText('Yellow wins!')
             }
-            winnerCheck(row_string)
-        }
-        // diagonal
-        // yes, i couldve calculated this each time but writing it out wasn't too bad and it's faster at runtime
-        // each pos is (column, row)
-        var diagonals = [
-            //
-            [[0,3],[1,2],[2,1],[3,0]],
-            [[0,4],[1,3],[2,2],[3,1],[4,0]],
-            [[0,5],[1,4],[2,3],[3,2],[4,1],[5,0]],
-            [[1,5],[2,4],[3,3],[4,2],[5,1],[6,0]],
-            [[2,5],[3,4],[4,3],[5,2],[6,1]],
-            [[3,5],[4,4],[5,3],[6,2]],
-            //
-            [[0,2],[1,3],[2,4],[3,5]],
-            [[0,1],[1,2],[2,3],[3,4],[4,5]],
-            [[0,0],[1,1],[2,2],[3,3],[4,4],[5,5]],
-            [[1,0],[2,1],[3,2],[4,3],[5,4],[6,5]],
-            [[2,0],[3,1],[4,2],[5,3],[6,4]],
-            [[3,0],[4,1],[5,2],[6,3]]
-        ]
-
-        for (diagonal in diagonals) {
-            var diagonal_string = ''
-
-            for (i in diagonals[diagonal]) {
-                var pos = diagonals[diagonal][i]
-                var token = window.gamestate[pos[0]][pos[1]]
-                if (token === undefined) {
-                    diagonal_string += ' '
-                }
-                else {
-                    diagonal_string += token
-                }
+            else {
+                setText('Red wins!')
             }
-            winnerCheck(diagonal_string)
+
+            // Remove the hovering tokens
+            clearAllHovers()
         }
+
+        
     }
     else {
         console.log('That column is full')
@@ -166,57 +134,120 @@ window.connect_4.onclick = function(event) {
 
 }
 
-// Updates window.column to make it contain the current column the mouse is in 
-function updateColumn(event) {
+// Gets the board column that the mouse is in
+function getMouseColumn(event) {
+    //the size/position of the connect 4 div
     rect = window.connect_4.getBoundingClientRect()
         
-    // rect.x is the position of the connect 4 box (top left)
+    // rect.x is the x position of the connect 4 div (top left)
     // padding is the padding to the left
     // event.clientX gives the position of the mouse
-    var new_column = Math.floor((event.clientX - rect.x - window.padding)/window.square_size)
+    return Math.floor((event.clientX - rect.x - window.padding)/window.square_size)
+}
 
-    if (new_column != window.column) {
-        // Handle a change in column
-        // Remove the hovering color from the previous column
+// ----- GAME FUNCTIONS -----
 
-        if ( window.column >= 0 && window.column <= 6) {
-            // if there was a hovering dot, remove the dot
-            // console.log('Removing dot from column '+ window.column)
-            document.getElementById(`connect-4-hover-square-${window.column}`).className = 'connect-4-square transparent'
+// Get the winner of a game
+// will return: 'yellow', 'red' or false
+function getWinner(gamestate) {
+    // vertical
+    for (column=0; column<7; column++) {
+        var column_string = gamestate[column]
+        var winner = fourInARow(column_string)
+        if (winner) {
+            return winner
         }
-
-        if ( new_column >= 0 && new_column <= 6) {
-            // if add the new hovering dot
-            // console.log('Adding dot to ' + new_column)
-            document.getElementById(`connect-4-hover-square-${new_column}`).className = 'connect-4-square ' + window.turn
-        }
-
-        window.column = new_column
     }
+
+    // horizontal
+    for (row=0; row<6; row++) {
+        var row_string = ''
+        for (column=0; column<7; column++) {
+            var token = gamestate[column][row]
+            if (token === undefined) {
+                row_string += ' '
+            }
+            else {
+                row_string += token
+            }
+        }
+
+        var winner = fourInARow(row_string)
+        if (winner) {
+            return winner
+        }
+    }
+
+    // diagonal
+    // yes, i couldve calculated this each time but writing it out wasn't too bad and it's faster at runtime
+    // each pos is (column, row)
+    var diagonals = [
+        //
+        [[0,3],[1,2],[2,1],[3,0]],
+        [[0,4],[1,3],[2,2],[3,1],[4,0]],
+        [[0,5],[1,4],[2,3],[3,2],[4,1],[5,0]],
+        [[1,5],[2,4],[3,3],[4,2],[5,1],[6,0]],
+        [[2,5],[3,4],[4,3],[5,2],[6,1]],
+        [[3,5],[4,4],[5,3],[6,2]],
+        //
+        [[0,2],[1,3],[2,4],[3,5]],
+        [[0,1],[1,2],[2,3],[3,4],[4,5]],
+        [[0,0],[1,1],[2,2],[3,3],[4,4],[5,5]],
+        [[1,0],[2,1],[3,2],[4,3],[5,4],[6,5]],
+        [[2,0],[3,1],[4,2],[5,3],[6,4]],
+        [[3,0],[4,1],[5,2],[6,3]]
+    ]
+
+    for (diagonal in diagonals) {
+        var diagonal_string = ''
+
+        for (i in diagonals[diagonal]) {
+            var pos = diagonals[diagonal][i]
+            var token = gamestate[pos[0]][pos[1]]
+            if (token === undefined) {
+                diagonal_string += ' '
+            }
+            else {
+                diagonal_string += token
+            }
+        }
+        
+        var winner = fourInARow(diagonal_string)
+        if (winner) {
+            return winner
+        }
+    }
+
+    return false
 }
 
 // Given a string, check if there is a four in a row in it
-function winnerCheck(string) {
+function fourInARow(string) {
     if (string.includes('yyyy')) {
-        window.winner = 'yellow'
-        setText('Yellow wins!')
+        return 'yellow'
     }
     else if (string.includes('rrrr')) {
-        window.winner = 'red'
-        setText('Red wins!')
+        return 'red'
     }
-    else {
-        return null
-    }
+    return false
+}
 
-    // Remove the hovering token
-    try {
-        document.getElementById(`connect-4-hover-square-${window.column}`).className = 'connect-4-square transparent'
+// ----- VISUAL FUNCTIONS -----
+
+// Displaying the hovering token
+function setHover(column, color) {
+    // column should be a number from 0 - 6
+    // color can be: 'red' 'yellow' or 'transparent'
+
+    if (column >= 0 && column <=6) {
+        document.getElementById(`connect-4-hover-square-${column}`).className = 'connect-4-square ' + color
     }
-    catch(e) {
-        console.log(window.column)
+}
+
+function clearAllHovers() {
+    for (column=0; column<7; column++) {
+        setHover(column, 'transparent')
     }
-    
 }
 
 // Sets the text displayed under the board
