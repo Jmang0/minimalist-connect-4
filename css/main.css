@@ -31,18 +31,38 @@ body {
 
 /* Info stuff */
 
+.info-bar {
+    padding: calc(var(--square-size) / 8) calc(var(--square-size) / 2);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
 .info-text {
-    order: 3;
-
     width: fit-content;
-    margin: auto;
-
     font-family: Verdana, Geneva, sans-serif;
     font-size: calc(var(--square-size) / 4);
     font-weight: bold;
     color: var(--light);
 }
 
+.play-again-icon {
+    width: calc(var(--square-size) * 0.45) ;
+    stroke: var(--light);
+
+}
+
+.spin {
+    animation: spin 1s;
+}
+
+@keyframes spin {
+    0% {transform: rotate(0deg)}
+    100% {transform: rotate(-360deg)}
+}
 
 /* The actual board styling */
 
@@ -66,7 +86,7 @@ body {
     background-color: var(--blue);
 }
 
-.connect-4-square {
+.connect-4-hover-square, .connect-4-board-square {
     width: calc(var(--square-size) * 0.8);
     height: calc(var(--square-size) * 0.8);
     margin: calc(var(--square-size) * 0.1);
@@ -78,9 +98,29 @@ body {
     background-color: transparent;
 }
 
+.fade_transparent {
+    animation: fade_transparent 1s;
+}
+
+@keyframes fade_transparent {
+    0% {}
+    100% {background-color: transparent;}
+}
+
+
 .empty {
     background-color: var(--lighter);
 }
+
+.fade_empty{
+    animation: fade_empty 1s;
+}
+
+@keyframes fade_empty {
+    0% {}
+    100% {background-color: var(--lighter);}
+}
+
 
 .yellow {
     background-color: var(--yellow);

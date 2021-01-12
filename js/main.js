@@ -1,18 +1,22 @@
 // After the html and css have loaded, setup the board and stuff
 window.addEventListener('load', function(){
-    setup()
-})
-
-// ----- SETUP -----
-function setup() {
-    // Easier reference to the element
-    window.connect_4 = document.getElementsByClassName('connect-4')[0]
-
     // Get the css variable for the square size
     window.square_size = parseInt(
         getComputedStyle(document.documentElement).getPropertyValue('--square-size')
     )
     window.padding = square_size/4
+
+    // Setup
+    setup()
+
+    // Link play again button to reset function
+    window.play_again_button = document.getElementsByClassName('play-again-icon')[0]
+    window.play_again_button.onclick = function(e) {reset()}
+})
+
+function setup() {
+    // Easier reference to the connect 4 element
+    window.connect_4 = document.getElementsByClassName('connect-4')[0]
 
     // Initial value for the mouse column, out of range
     window.column = -1
@@ -20,6 +24,7 @@ function setup() {
     // Game variables
     window.gamestate = ['','','','','','',''] // setup empty game
     window.winner = false
+    window.hover = true
     window.turn = 'yellow'
     setText('Yellow\'s turn')
 
@@ -31,6 +36,25 @@ function setup() {
     window.connect_4.onclick = function(e) {onClick(e)}
 }
 
+function reset() {
+    // Spin Animation
+    setAnimation(window.play_again_button, 'spin', 1000)
+
+    // Remove hovering squares
+    clearAllHovers()
+    window.hover = false
+
+    // Set board squares to empty
+    clearAllTokens()
+
+    // Game variables
+    window.gamestate = ['','','','','','',''] // setup empty game
+    window.winner = false
+    window.hover = true
+    window.turn = 'yellow'
+    setText('Yellow\'s turn')
+
+}
 // ----- BOARD FUNCTIONS -----
 
 function setupBoard() {
@@ -42,7 +66,7 @@ function setupBoard() {
     for (row=5; row>=0; row--) {
         for (column=0; column<7; column++) {
             square = document.createElement('div')
-            square.className = 'connect-4-square empty'
+            square.className = 'connect-4-board-square empty'
             square.id = `connect-4-board-square-${column}-${row}`
 
             board.appendChild(square)
@@ -54,7 +78,7 @@ function setupBoard() {
 
     for (i=0; i<7; i++) {
         square = document.createElement('div')
-        square.className = 'connect-4-square transparent'
+        square.className = 'connect-4-hover-square transparent'
         square.id = `connect-4-hover-square-${i}`
 
         hover.appendChild(square)
@@ -71,25 +95,19 @@ function setupBoard() {
 
 // Handle the mouse moving
 function onMouseMove(event) {
-    if (window.winner != false) {
-        // If the game is already over, don't bother tracking where the mouse is and stuff
-        return false
+    if (window.hover) {
+        var new_column = getMouseColumn(event)
+    
+        // console.log('Moved in column ' + new_column)
+    
+        if (new_column != window.column) {
+            // Remove the hovering token from where it was and add it to the new column
+            setHover(window.column, 'transparent')
+            setHover(new_column, window.turn)
+            window.column = new_column
+        }
+    
     }
-    
-    
-
-    var new_column = getMouseColumn(event)
-    
-    console.log('Moved in column ' + new_column)
-
-    if (new_column != window.column) {
-        // Remove the hovering token from where it was and add it to the new column
-        setHover(window.column, 'transparent')
-        setHover(new_column, window.turn)
-        window.column = new_column
-    }
-
-
 }
 
 // Handle mouse clicks
@@ -102,8 +120,8 @@ function onClick(event) {
     // when the mouse is clicked, update the column it's in
     // i didn't think this was necessary but it breaks without it
     window.column = getMouseColumn(event)
-
-    console.log('Clicked column ' + window.column)
+    // console.log('Clicked column ' + window.column)
+    
     num_pieces_in_column = window.gamestate[window.column].length
 
     if (num_pieces_in_column < 6) {
@@ -111,7 +129,8 @@ function onClick(event) {
         window.gamestate[window.column] += window.turn[0]
         
         // Drop the piece (the number of pieces previously in the columna also happens to be the y coordinate)
-        document.getElementById(`connect-4-board-square-${window.column}-${num_pieces_in_column}`).className = 'connect-4-square ' + window.turn
+        document.getElementById(`connect-4-board-square-${window.column}-${num_pieces_in_column}`).className = 'connect-4-board-square ' + window.turn
+        setToken(window.column, num_pieces_in_column, window.turn)
 
         // Change who's turn it is
         if (window.turn == 'yellow') {
@@ -131,7 +150,7 @@ function onClick(event) {
 
         if (winner) {
             window.winner = winner
-
+            
             // Show the winner
             if (winner == 'yellow') {
                 setText('Yellow wins!')
@@ -145,6 +164,7 @@ function onClick(event) {
 
             // Remove the hovering tokens
             clearAllHovers()
+            window.hover = false
         }
 
         
@@ -269,16 +289,29 @@ function fourInARow(string) {
 
 // ----- VISUAL FUNCTIONS -----
 
+function setToken(column, row, color) {
+    document.getElementById(`connect-4-board-square-${column}-${row}`).className = 'connect-4-board-square ' + color
+}
+
+function clearAllTokens() {
+    for (row=5; row>=0; row--) {
+        for (column=0; column<7; column++) {
+            setToken(column, row, 'empty')
+        }
+    }
+}
+
 // Displaying the hovering token
 function setHover(column, color) {
     // column should be a number from 0 - 6
     // color can be: 'red' 'yellow' or 'transparent'
 
     if (column >= 0 && column <=6) {
-        document.getElementById(`connect-4-hover-square-${column}`).className = 'connect-4-square ' + color
+        document.getElementById(`connect-4-hover-square-${column}`).className = 'connect-4-hover-square ' + color
     }
 }
 
+// Get rid of the hovering token, wherever it is
 function clearAllHovers() {
     for (column=0; column<7; column++) {
         setHover(column, 'transparent')
@@ -288,4 +321,14 @@ function clearAllHovers() {
 // Sets the text displayed under the board
 function setText(string) {
     document.getElementsByClassName('info-text')[0].innerHTML = string
+}
+
+function setAnimation(element, animation_name, length) {
+    element.classList.add(animation_name)
+    setTimeout(
+        function() {
+            element.classList.remove(animation_name)
+        },
+        length + 100
+    )
 }
