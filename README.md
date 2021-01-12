@@ -8,8 +8,10 @@ I decided I wanted to make connect 4, so I did.
 - ~~Add a few text instructions (yellow's turn, game over, red wins etc)~~
 - ~~'It's a draw' when there are no spaces left~~
 - ~~Fix a bug where hovering/clicking don't do anything~~
-- ~~Add a reset/play again button~~
 - ~~Fix a bug where the token stays hanging~~ (I think)
+- ~~Add a reset/play again button~~
+- ~~Add a header~~
 - Make a bot to play against
-- Add a header
+- Make the size of the board and padding adjust with the window size
+- Make it work better on mobile?
 

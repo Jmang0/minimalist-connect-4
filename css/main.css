@@ -18,6 +18,14 @@ body {
     padding: 0px;
 
     background-color: var(--dark);
+
+    color: var(--light);
+    font-family: Verdana, Geneva, sans-serif;
+    font-weight: bold;
+}
+
+hr {
+    margin: 0px calc(var(--square-size) / 4);
 }
 
 .container {
@@ -26,12 +34,12 @@ body {
 }
 
 .connect-4-hover, .connect-4-board, .info-bar {
-    padding: calc(var(--square-size) / 4);
+    padding: 0px calc(var(--square-size) / 4);
 }
 
-/* Info stuff */
+/* Header */
 
-.info-bar {
+.header {
     padding: calc(var(--square-size) / 8) calc(var(--square-size) / 2);
 
     display: flex;
@@ -40,29 +48,18 @@ body {
     align-items: center;
 }
 
-
-.info-text {
+.header-text {
+    margin: 0px;
     width: fit-content;
-    font-family: Verdana, Geneva, sans-serif;
-    font-size: calc(var(--square-size) / 4);
-    font-weight: bold;
-    color: var(--light);
+    font-size: calc(var(--square-size) * 0.4);
 }
 
-.play-again-icon {
-    width: calc(var(--square-size) * 0.45) ;
+.github-icon {
+    margin-left: calc(var(--square-size) / 4);
+    width: calc(var(--square-size) * 0.4) ;
     stroke: var(--light);
-
 }
 
-.spin {
-    animation: spin 1s;
-}
-
-@keyframes spin {
-    0% {transform: rotate(0deg)}
-    100% {transform: rotate(-360deg)}
-}
 
 /* The actual board styling */
 
@@ -76,6 +73,7 @@ body {
 
 .connect-4-hover {
     height: var(--square-size);
+    padding-top: calc(var(--square-size) / 8);
     padding-bottom: calc(var(--square-size) / 8);
 }
 
@@ -128,4 +126,37 @@ body {
 
 .red {
     background-color: var(--red);
+}
+
+
+
+/* Info bar stuff */
+
+.info-bar {
+    padding: calc(var(--square-size) / 8) calc(var(--square-size) / 2);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-text {
+    width: fit-content;
+    font-size: calc(var(--square-size) * 0.25);
+}
+
+.play-again-icon {
+    width: calc(var(--square-size) * 0.45) ;
+    stroke: var(--light);
+
+}
+
+.spin {
+    animation: spin 1s;
+}
+
+@keyframes spin {
+    0% {transform: rotate(0deg)}
+    100% {transform: rotate(-360deg)}
 }
