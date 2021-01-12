@@ -18,10 +18,11 @@ body {
     padding: 0px;
 
     background-color: var(--dark);
+}
 
+.header-text, .info-text {
     color: var(--light);
     font-family: Verdana, Geneva, sans-serif;
-    font-weight: bold;
 }
 
 hr {
@@ -51,7 +52,10 @@ hr {
 .header-text {
     margin: 0px;
     width: fit-content;
+
     font-size: calc(var(--square-size) * 0.4);
+    font-variant: small-caps;
+    font-weight: 400;
 }
 
 .github-icon {
@@ -137,19 +141,19 @@ hr {
 
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-between;    
     align-items: center;
 }
 
 .info-text {
     width: fit-content;
     font-size: calc(var(--square-size) * 0.25);
+    font-weight: bold;
 }
 
 .play-again-icon {
     width: calc(var(--square-size) * 0.45) ;
     stroke: var(--light);
-
 }
 
 .spin {
