@@ -26,8 +26,12 @@ function setupGame() {
     window.gamestate = ['','','','','','',''] // setup empty game
     window.winner = false
     window.hover = true
+
     window.turn = 'yellow'
     setText('Yellow\'s turn')
+
+    window.score = {'yellow': 0, 'red': 0}
+    updateScoreboard()
 
     // Set click & move function
     window.connect_4.onmousemove = function(e) {onMouseMove(e)}
@@ -84,8 +88,18 @@ function reset() {
     window.gamestate = ['','','','','','',''] // setup empty game
     window.winner = false
     window.hover = true
-    window.turn = 'yellow'
-    setText('Yellow\'s turn')
+
+
+    // If there have been an even number of games, yellow goes first
+    // Otherwise red goes first
+    if ( (window.score['yellow'] + window.score['red']) % 2 == 0) {
+        window.turn = 'yellow'
+        setText('Yellow\'s turn')
+    }
+    else {
+        window.turn = 'red'
+        setText('Red\'s turn')
+    }
 
 }
 // ----- BOARD FUNCTIONS -----
@@ -155,6 +169,8 @@ function onClick(event) {
 
         if (winner) {
             window.winner = winner
+            window.score[winner] ++
+            updateScoreboard()
             
             // Show the winner
             if (winner == 'yellow') {
@@ -326,6 +342,14 @@ function clearAllHovers() {
 // Sets the text displayed under the board
 function setText(string) {
     document.getElementsByClassName('info-text')[0].innerHTML = string
+}
+
+function updateScoreboard() {
+    y = document.getElementsByClassName('yellow-score')[0]
+    y.innerHTML = window.score['yellow']
+
+    r = document.getElementsByClassName('red-score')[0]
+    r.innerHTML = window.score['red']
 }
 
 function setAnimation(element, animation_name, length) {
